@@ -31,16 +31,8 @@ export function createApp() {
         });
     });
 
-    app.get("/api/v1/opening-hours", (req, res) => {
-        res.status(200).json({
-            weekday: '07:00 - 17:00',
-            saturday: '08:00 - 15:00',
-            sunday: 'Closed',
-        });
-    });
-
-    
     // Implement the routers: routes all endpoints defined in the routers will be prefixed with the router's path as in /api/v1/books/...
+    app.get("/api/v1/opening-hours", openingHoursRouter);
     app.use("/api/v1/books", booksRouter);
     app.use("/api/v1/books/:bookId/reviews", reviewsRouter);
     app.use("/api/v1/loans", loansRouter);
