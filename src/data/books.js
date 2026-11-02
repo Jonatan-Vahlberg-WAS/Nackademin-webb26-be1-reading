@@ -54,7 +54,7 @@ export function updateBook(id, book) {
     const index = books.findIndex(book => book.id === id);
     // Book found, update it
     if (index !== -1) {
-        books[index] = { id: nextId, ...book };
+        books[index] = { ...books[index], ...book, id };
         return books[index];
     }
     // Book not found, return null

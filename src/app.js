@@ -2,15 +2,9 @@ import express from 'express';
 import { env } from './config/env.js';
 import { logRequest } from './middlewares/logger.js';
 
+import { booksRouter } from './routes/books.js';
 import { loansRouter } from './routes/loans.js';
-
-import {
-    getBooks,
-    getBookById,
-    createBook,
-    updateBook,
-    deleteBook,
-} from './data/books.js';
+import { reviewsRouter } from './routes/reviews.js';
 
 /**
  * Create a new express application for running our API on
@@ -45,63 +39,10 @@ export function createApp() {
         });
     });
 
-    // A GET: endpoint for retrieving all books from a "db"
-    app.get("/api/v1/books", (req, res) => {
-        // Respond with a 200 status code and a JSON array with in memory books
-        const books = getBooks();
-        res.status(200).json(books);
-    });
-
-    // A GET: endpoint for retrieving a book by its id
-    app.get("/api/v1/books/:id", (req, res) => {
-        const id = parseInt(req.params.id);
-        const book = getBookById(id);
-        if (book) {
-            res.status(200).json(book);
-        } else {
-            res.status(404).json({ error: 'Book not found' });
-        }
-    });
-
-    // A POST: endpoint for creating a new book
-    app.post("/api/v1/books", (req, res) => {
-        const title = req.body.title;
-        const author = req.body.author;
-        if (!title || !author) {
-            return res.status(400).json({ error: 'Title and author are required' });
-        }
-        const book = createBook({ title, author });
-        res.status(201).json(book);
-    });
-
-    // A PUT: endpoint for updating a book by its id
-    app.put("/api/v1/books/:id", (req, res) => {
-        const id = parseInt(req.params.id);
-        const title = req.body.title;
-        const author = req.body.author;
-        if (!title || !author) {
-            return res.status(400).json({ error: 'Title and author are required' });
-        }
-        const book = updateBook(id, { title, author });
-        if (book) {
-            res.status(200).json(book);
-        } else {
-            res.status(404).json({ error: 'Book not found' });
-        }
-    });
-
-    // A DELETE: endpoint for deleting a book by its id
-    app.delete("/api/v1/books/:id", (req, res) => {
-        const id = parseInt(req.params.id);
-        const success = deleteBook(id);
-        if (success) {
-            res.status(204).send();
-        } else {
-            res.status(404).json({ error: 'Book not found' });
-        }
-    });
-
-    // Implement the loans routes all routes defined in the loansRouter will be prefixed with /api/v1/loans
+    
+    // Implement the routers: routes all endpoints defined in the routers will be prefixed with the router's path as in /api/v1/books/...
+    app.use("/api/v1/books", booksRouter);
+    app.use("/api/v1/books/:bookId/reviews", reviewsRouter);
     app.use("/api/v1/loans", loansRouter);
 
     return app;

@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { getLoans, createLoan } from '../data/loans.js';
+import { validateBody } from '../middlewares/validate.js';
+import { createLoanSchema } from '../schemas/loanSchemas.js';
 
 // creates a new router instance
 // A router bundles a set of routes for a given part of the URL
@@ -12,13 +14,8 @@ router.get('/', (req, res) => {
     res.status(200).json(loans);
 });
 
-router.post('/', (req, res) => {
-    const bookId = req.body.bookId;
-    const userId = req.body.userId;
-    if (!bookId || !userId) {
-        return res.status(400).json({ error: 'Book ID and user ID are required' });
-    }
-    const loan = createLoan({ bookId, userId });
+router.post('/', validateBody(createLoanSchema), (req, res) => {
+    const loan = createLoan(req.body);
     res.status(201).json(loan);
 });
 
