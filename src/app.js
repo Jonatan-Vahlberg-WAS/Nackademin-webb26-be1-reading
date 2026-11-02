@@ -5,6 +5,7 @@ import { logRequest } from './middlewares/logger.js';
 import { booksRouter } from './routes/books.js';
 import { loansRouter } from './routes/loans.js';
 import { reviewsRouter } from './routes/reviews.js';
+import { openingHoursRouter } from './routes/openingHours.js';
 
 /**
  * Create a new express application for running our API on
@@ -32,7 +33,7 @@ export function createApp() {
     });
 
     // Implement the routers: routes all endpoints defined in the routers will be prefixed with the router's path as in /api/v1/books/...
-    app.get("/api/v1/opening-hours", openingHoursRouter);
+    app.use("/api/v1/opening-hours", openingHoursRouter);
     app.use("/api/v1/books", booksRouter);
     app.use("/api/v1/books/:bookId/reviews", reviewsRouter);
     app.use("/api/v1/loans", loansRouter);
